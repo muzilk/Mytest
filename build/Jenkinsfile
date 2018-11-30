@@ -29,7 +29,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo 'Building.. ${AA}'
+                echo 'Building..'
             }
         }
         stage('Deploy') {
@@ -46,7 +46,7 @@ pipeline {
 
     post {
         always {
-            echo 'I will always say Hello again! ${AA}'
+            echo 'I will always say Hello again! '
         }
     }
 }
