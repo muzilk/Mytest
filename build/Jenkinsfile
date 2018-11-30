@@ -1,8 +1,8 @@
 pipeline {
     agent any
 
-    environment {
-    }
+ //   environment {
+  //  }
 
     stages {
         stage ('Clone the repository') {
@@ -45,7 +45,7 @@ pipeline {
     }
 
     post {
-      always {
-      }
+ //     always {
+   //   }
     }
 }
