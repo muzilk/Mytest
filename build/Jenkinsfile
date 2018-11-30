@@ -4,9 +4,9 @@ pipeline {
     environment {
         AA = "test"
     }
-
+    sh 'printenv'
     stages {
-        sh 'printenv'
+        
         stage ('Clone the repository') {
             steps {
                 dir('Mytest') {
