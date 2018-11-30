@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        AA = "test"
+        AA = 'test'
     }
     stages { 
         stage ('Clone the repository') {
