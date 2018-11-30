@@ -5,27 +5,7 @@ pipeline {
         AA = "test"
     }
     stages { 
-        stage ('Clone the repository') {
-            steps {
-                dir('Mytest') {
-                    checkout([
-                        $class: 'GitSCM',
-                        branches: [[name: "master"]],
-                        userRemoteConfigs: [[
-                            url: 'git@github.com:muzilk/Mytest.git',
-                            name: 'origin',
-                            credentialsId: 'f9275bec-6e51-4a1b-abf2-152a12c66da2',
-                            refspec: "+refs/heads/master:refs/remotes/${GIT_BRANCH}"
-                        ]],
-                        extensions: [[
-                            $class: 'CloneOption',
-                            noTags: true,
-                            honorRefspec: true
-                        ]]
-                    ])
-                }
-            }
-        }
+        
 
         stage('Build') {
             steps {
