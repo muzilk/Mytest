@@ -35,7 +35,7 @@ pipeline {
 
         stage('Prepare') {
             steps {
-                sh 'git clean -xdff'
+             //   sh 'git clean -xdff'
                 sh 'git submodule sync'
                 sh 'git submodule update --init --recursive'
 
