@@ -18,7 +18,7 @@ pipeline {
                         $class: 'GitSCM',
                         branches: [[name: "master"]],
                         userRemoteConfigs: [[
-                            url: 'git@github.com:muzilk/Mytest.git',
+                            url: 'ssh://eupgbld@gerrit.ericsson.se:29418/adp-cicd/bob',
                             name: 'origin',
                             credentialsId: 'f67a45c2-6314-4078-bad4-4aff6099c734',
                             refspec: "+refs/heads/master:refs/remotes/${GIT_BRANCH}"
