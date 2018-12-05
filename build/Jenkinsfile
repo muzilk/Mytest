@@ -1,31 +1,115 @@
 pipeline {
-    agent any
+//    agent any
+    agent {
+        node {
+            label 'docker'
+        }
+    }
+
 
     environment {
         AA = 'test'
     }
     stages { 
-        //   stage ('Clone the repository') {
-        //    steps {
-        //        dir('Mytest') {
-        //            checkout([
-        //                $class: 'GitSCM',
-        //                branches: [[name: "master"]],
-        //                userRemoteConfigs: [[
-        //                    url: 'git@github.com:muzilk/Mytest.git',
-        //                    name: 'origin',
-        //                    credentialsId: 'f9275bec-6e51-4a1b-abf2-152a12c66da2',
-        //                    refspec: "+refs/heads/master:refs/remotes/${GIT_BRANCH}"
-        //                ]],
-        //                extensions: [[
-        //                    $class: 'CloneOption',
-        //                    noTags: true,
-        //                    honorRefspec: true
-        //                ]]
-        //            ])
-        //        }
-        //    }
-        //}
+           stage ('Clone the repository') {
+            steps {
+                dir('Mytest') {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: "master"]],
+                        userRemoteConfigs: [[
+                            url: 'git@github.com:muzilk/Mytest.git',
+                            name: 'origin',
+                            credentialsId: 'f9275bec-6e51-4a1b-abf2-152a12c66da2',
+                            refspec: "+refs/heads/master:refs/remotes/${GIT_BRANCH}"
+                        ]],
+                        extensions: [[
+                            $class: 'CloneOption',
+                            noTags: true,
+                            honorRefspec: true
+                        ]]
+                    ])
+                }
+            }
+        }
+
+        stage('Prepare') {
+            steps {
+                sh 'git clean -xdff'
+                sh 'git submodule sync'
+                sh 'git submodule update --init --recursive'
+
+                // Ensure that Bob has all of its dependencies
+                sh './bob/bob --help'
+            }
+        }
+
+        stage('Clean') {
+            steps {
+                sh './bob/bob clean'
+            }
+        }
+
+        stage('Generate version') {
+            steps {
+                sh './bob/bob init'
+                archiveArtifacts 'artifact.properties'
+            }
+        }
+
+        stage('Lint Markdown and Helm') {
+            steps {
+                sh './bob/bob lint'
+            }
+        }
+
+        stage('Generate Docs') {
+            steps {
+                sh './bob/bob generate'
+                archiveArtifacts 'build/doc/**/*.*'
+            }
+        }
+
+        stage('Build source code') {
+            steps {
+                sh './bob/bob build'
+            }
+        }
+
+        stage('Build docker image') {
+            steps {
+                sh './bob/bob image-dirty'
+            }
+        }
+
+        stage('Test Helm Chart Design Rules') {
+            steps {
+                sh './bob/bob test'
+                archiveArtifacts '.bob/design-rule-check-report.*'
+            }
+        }
+
+        stage('Create dirty Helm Package') {
+            steps {
+                sh './bob/bob package-dirty'
+            }
+        }
+
+        stage('System Test') {
+            steps {
+                sh './bob/bob system-test'
+            }
+        }
+
+        stage('Publish Docker Image and Helm Chart') {
+            when { expression { (params.RELEASE=="true") } }
+            steps {
+                withCredentials([string(credentialsId: 'helm-repo-api-token-id',
+                        variable: 'API_TOKEN')]) {
+                    sh './bob/bob publish'
+                }
+            }
+        }
 
         stage('Build') {
             steps {
