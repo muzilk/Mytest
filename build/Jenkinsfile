@@ -13,7 +13,7 @@ pipeline {
     stages { 
            stage ('Clone the repository') {
             steps {
-                dir('Mytest') {
+                dir('bob') {
                     checkout([
                         $class: 'GitSCM',
                         branches: [[name: "master"]],
