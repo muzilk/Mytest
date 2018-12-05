@@ -20,7 +20,7 @@ pipeline {
                         userRemoteConfigs: [[
                             url: 'git@github.com:muzilk/Mytest.git',
                             name: 'origin',
-                            credentialsId: 'f9275bec-6e51-4a1b-abf2-152a12c66da2',
+                            credentialsId: 'f67a45c2-6314-4078-bad4-4aff6099c734',
                             refspec: "+refs/heads/master:refs/remotes/${GIT_BRANCH}"
                         ]],
                         extensions: [[
